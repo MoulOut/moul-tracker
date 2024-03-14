@@ -17,15 +17,15 @@
           class="is-flex is-align-items-center is-justify-content-space-between"
         >
           <section>
-            <strong>00:00:00</strong>
+            <strong>{{ tempoDecorrido }}</strong>
           </section>
-          <button class="button">
+          <button class="button" @click="iniciarContagem">
             <span class="icon">
               <i class="fas fa-play"></i>
             </span>
             <span>play</span>
           </button>
-          <button class="button">
+          <button class="button" @click="finalizarContagem">
             <span class="icon">
               <i class="fas fa-stop"></i>
             </span>
@@ -43,5 +43,29 @@ import { defineComponent } from 'vue';
 export default defineComponent({
   // eslint-disable-next-line
   name: 'Formulário',
+  data() {
+    return {
+      tempoEmSegundos: 0,
+    };
+  },
+  computed: {
+    tempoDecorrido(): string {
+      return new Date(this.tempoEmSegundos * 1000)
+        .toISOString()
+        .substring(11, 19);
+    },
+  },
+  methods: {
+    iniciarContagem() {
+      console.log('Incrementando o contador em 1s');
+
+      setInterval(() => this.tempoEmSegundos++, 1000);
+      console.log(this.tempoEmSegundos);
+    },
+
+    finalizarContagem() {
+      console.log('Finalizando Contagem');
+    },
+  },
 });
 </script>
