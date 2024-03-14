@@ -23,10 +23,12 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import Temporizador from './Temporizador.vue';
+import ITarefa from '@/interface/ITarefa';
 
 export default defineComponent({
   // eslint-disable-next-line
   name: 'Formulário',
+  emits: ['salvarTarefa'],
   data() {
     return {
       descricao: '',
@@ -35,9 +37,11 @@ export default defineComponent({
   components: { Temporizador },
   methods: {
     finalizarTarefa(tempoDecorrido: number): void {
-      console.log(tempoDecorrido);
-      console.log(this.descricao);
-      this.descricao = ''
+      this.$emit('salvarTarefa', {
+        descricao: this.descricao,
+        duracaoEmSegundos: tempoDecorrido,
+      } as ITarefa);
+      this.descricao = '';
     },
   },
 });
