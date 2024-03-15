@@ -1,19 +1,39 @@
+<template>
+  <header>
+    <h1>
+      <img src="@/assets/logo.png" alt="" />
+      <button class="button" @click="alterarModo">{{ textoBotao }}</button>
+    </h1>
+  </header>
+</template>
+
 <script lang="ts">
 import { defineComponent } from 'vue';
 
 export default defineComponent({
   name: 'BarraLateral',
+  emits: ['alteraTema'],
+  data() {
+    return {
+      modoEscuro: false,
+    };
+  },
+  computed: {
+    textoBotao() {
+      if (this.modoEscuro) {
+        return 'Desativar Modo Escuro';
+      }
+      return 'Ativar Modo Escuro';
+    },
+  },
+  methods: {
+    alterarModo(): void {
+      this.modoEscuro = !this.modoEscuro;
+      this.$emit('alteraTema', this.modoEscuro);
+    },
+  },
 });
 </script>
-
-<template>
-  <header>
-    <h1>
-      <img src="@/assets/logo.png" alt="" />
-    </h1>
-    <button class="button">Ativar Modo Escuro</button>
-  </header>
-</template>
 
 <style scoped>
 header {
