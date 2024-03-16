@@ -33,8 +33,8 @@
 </template>
 
 <script lang="ts">
-import IProjeto from '@/interface/IProjeto';
-import { defineComponent } from 'vue';
+import { useStore } from '@/store';
+import { computed, defineComponent } from 'vue';
 
 export default defineComponent({
   // eslint-disable-next-line vue/multi-word-component-names
@@ -42,19 +42,21 @@ export default defineComponent({
   data() {
     return {
       nomeDoProjeto: '',
-      projetos: [] as IProjeto[],
     };
   },
   methods: {
     salvar() {
-      const projeto: IProjeto = {
-        nome: this.nomeDoProjeto,
-        id: new Date().toDateString(),
-      };
+      this.store.commit('ADICIONA_PROJETO', this.nomeDoProjeto);
 
-      this.projetos.push(projeto);
       this.nomeDoProjeto = '';
     },
+  },
+  setup() {
+    const store = useStore();
+    return {
+      store,
+      projetos: computed(() => store.state.projetos),
+    };
   },
 });
 </script>

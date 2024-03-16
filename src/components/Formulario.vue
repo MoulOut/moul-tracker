@@ -38,8 +38,7 @@
 import { computed, defineComponent } from 'vue';
 import Temporizador from './Temporizador.vue';
 import ITarefa from '@/interface/ITarefa';
-import { useStore } from 'vuex';
-import { storeKey } from '@/store';
+import { useStore } from '@/store';
 
 export default defineComponent({
   // eslint-disable-next-line
@@ -63,7 +62,7 @@ export default defineComponent({
     },
   },
   setup() {
-    const store = useStore(storeKey);
+    const store = useStore() ;
     return {
       projetos: computed(() => store.state.projetos),
     };
