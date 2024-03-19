@@ -4,11 +4,14 @@ import { Store, createStore, useStore as vuexUseStore } from 'vuex';
 import {
   ADICIONA_PROJETO,
   ALTERA_PROJETO,
+  DEFINIR_PROJETOS,
   EXCLUIR_PROJETO,
   NOTIFICAR,
 } from './tipo-mutations';
 import { INotificacao } from '@/interface/INotificacao';
 import ITarefa from '@/interface/ITarefa';
+import { OBTER_PROJETOS } from './tipo-actions';
+import clientHttp from '@/http';
 
 interface Estado {
   projetos: IProjeto[];
@@ -48,6 +51,17 @@ export const store = createStore<Estado>({
       setTimeout(() => {
         state.notificacoes.pop();
       }, 3000);
+    },
+    [DEFINIR_PROJETOS](state, projetos: IProjeto[]) {
+      state.projetos = projetos;
+    },
+  },
+  actions: {
+    [OBTER_PROJETOS]({ commit }) {
+      clientHttp
+        .get('/projetos')
+        .then((response) => commit(DEFINIR_PROJETOS, response.data))
+        .catch((error) => console.error(error));
     },
   },
 });
