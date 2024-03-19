@@ -18,8 +18,13 @@
 </template>
 
 <script lang="ts">
+import { INotificacao, TipoNotificacao } from '@/interface/INotificacao';
 import { useStore } from '@/store';
-import { ADICIONA_PROJETO, ALTERA_PROJETO } from '@/store/tipo-mutations';
+import {
+  ADICIONA_PROJETO,
+  ALTERA_PROJETO,
+  NOTIFICAR,
+} from '@/store/tipo-mutations';
 import { defineComponent } from 'vue';
 
 export default defineComponent({
@@ -50,6 +55,11 @@ export default defineComponent({
         this.store.commit(ADICIONA_PROJETO, this.nomeDoProjeto);
       }
       this.nomeDoProjeto = '';
+      this.store.commit(NOTIFICAR, {
+        titulo: 'Novo Projeto salvo',
+        texto: 'Prontinho :) seu projeto já está disponivel.',
+        tipo: TipoNotificacao.SUCESSO,
+      } as INotificacao);
       this.$router.push('/projetos');
     },
   },

@@ -5,12 +5,15 @@ import {
   ADICIONA_PROJETO,
   ALTERA_PROJETO,
   EXCLUIR_PROJETO,
+  NOTIFICAR,
 } from './tipo-mutations';
-import { INotificacao, TipoNotificacao } from '@/interface/INotificacao';
+import { INotificacao } from '@/interface/INotificacao';
+import ITarefa from '@/interface/ITarefa';
 
 interface Estado {
   projetos: IProjeto[];
   notificacoes: INotificacao[];
+  tarefas: ITarefa[];
 }
 
 export const storeKey: InjectionKey<Store<Estado>> = Symbol();
@@ -18,26 +21,8 @@ export const storeKey: InjectionKey<Store<Estado>> = Symbol();
 export const store = createStore<Estado>({
   state: {
     projetos: [],
-    notificacoes: [
-      {
-        id: 1,
-        texto: 'Uma notificacao de sucesso',
-        titulo: 'Sucesso',
-        tipo: TipoNotificacao.SUCESSO,
-      },
-      {
-        id: 2,
-        texto: 'Uma notificacao de atenção',
-        titulo: 'Atenção',
-        tipo: TipoNotificacao.ATENCAO,
-      },
-      {
-        id: 3,
-        texto: 'Uma notificacao de falha',
-        titulo: 'Falha',
-        tipo: TipoNotificacao.FALHA,
-      },
-    ],
+    notificacoes: [],
+    tarefas: [],
   },
   mutations: {
     [ADICIONA_PROJETO](state, nomeDoProjeto: string) {
@@ -55,6 +40,14 @@ export const store = createStore<Estado>({
     },
     [EXCLUIR_PROJETO](state, id: string) {
       state.projetos = state.projetos.filter((projetos) => projetos.id !== id);
+    },
+    [NOTIFICAR](state, novaNotificacao: INotificacao) {
+      novaNotificacao.id = new Date().getTime();
+      state.notificacoes.push(novaNotificacao);
+
+      setTimeout(() => {
+        state.notificacoes.pop();
+      }, 3000);
     },
   },
 });

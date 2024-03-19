@@ -39,6 +39,8 @@ import { computed, defineComponent } from 'vue';
 import Temporizador from './Temporizador.vue';
 import ITarefa from '@/interface/ITarefa';
 import { useStore } from '@/store';
+import { NOTIFICAR } from '@/store/tipo-mutations';
+import { INotificacao, TipoNotificacao } from '@/interface/INotificacao';
 
 export default defineComponent({
   // eslint-disable-next-line
@@ -53,6 +55,18 @@ export default defineComponent({
   components: { Temporizador },
   methods: {
     finalizarTarefa(tempoDecorrido: number): void {
+      const projeto = this.projetos.find((p) => p.id === this.idProjeto);
+      
+      if (!projeto) {
+        this.store.commit(NOTIFICAR, {
+          titulo: 'OPS!',
+          texto: 'Selecione um projeto antes de iniciar uma tarefa',
+          tipo: TipoNotificacao.ATENCAO,
+        } as INotificacao);
+
+        return;
+      }
+
       this.$emit('salvarTarefa', {
         descricao: this.descricao,
         duracaoEmSegundos: tempoDecorrido,
@@ -62,9 +76,10 @@ export default defineComponent({
     },
   },
   setup() {
-    const store = useStore() ;
+    const store = useStore();
     return {
       projetos: computed(() => store.state.projetos),
+      store,
     };
   },
 });
