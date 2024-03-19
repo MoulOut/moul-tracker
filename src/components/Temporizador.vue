@@ -2,13 +2,13 @@
   <div class="is-flex is-align-items-center is-justify-content-space-between">
     <Cronometro :tempo-em-segundos="tempoEmSegundos" />
     <BotaoTemporizador
-      :texto="'Play'"
+      :texto="'Iniciar'"
       :ativo="cronometroAtivo"
       :icone="'fas fa-play'"
       @clicado="iniciarContagem"
     />
     <BotaoTemporizador
-      :texto="'Stop'"
+      :texto="'Parar'"
       :ativo="!cronometroAtivo"
       :icone="'fas fa-stop'"
       @clicado="finalizarContagem"

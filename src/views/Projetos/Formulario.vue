@@ -49,6 +49,13 @@ export default defineComponent({
           nome: this.nomeDoProjeto,
         });
       } else {
+        if (!this.nomeDoProjeto) {
+          return this.notificar(
+            TipoNotificacao.FALHA,
+            'Falha',
+            'Nome do projeto precisa ser informado.'
+          );
+        }
         this.store.commit(ADICIONA_PROJETO, this.nomeDoProjeto);
       }
       this.nomeDoProjeto = '';
