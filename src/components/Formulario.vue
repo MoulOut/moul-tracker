@@ -40,13 +40,12 @@ import Temporizador from './Temporizador.vue';
 import ITarefa from '@/interface/ITarefa';
 import { useStore } from '@/store';
 import { TipoNotificacao } from '@/interface/INotificacao';
-import { notificacaoMixin } from '@/mixins/notificar';
+import useNotificador from '@/hooks/notificador';
 
 export default defineComponent({
   // eslint-disable-next-line
   name: 'Formulário',
   emits: ['salvarTarefa'],
-  mixins: [notificacaoMixin],
   data() {
     return {
       descricao: '',
@@ -78,9 +77,11 @@ export default defineComponent({
   },
   setup() {
     const store = useStore();
+    const { notificar } = useNotificador();
     return {
       projetos: computed(() => store.state.projetos),
       store,
+      notificar,
     };
   },
 });
