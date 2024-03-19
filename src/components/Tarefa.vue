@@ -4,10 +4,10 @@
       <div class="column is-4">
         {{ tarefa.descricao || 'Tarefa sem descrição' }}
       </div>
-      <div class="column is-4">
+      <div class="column is-3">
         {{ tarefa.projeto.nome }}
       </div>
-      <div class="column is-1">
+      <div class="column">
         <Cronometro :tempo-em-segundos="tarefa.duracaoEmSegundos" />
       </div>
     </div>
