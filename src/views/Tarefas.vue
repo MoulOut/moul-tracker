@@ -27,7 +27,9 @@
         </header>
         <section class="modal-card-body">
           <div class="field">
-            <label for="tarefaSelecionada" class="label"> Nome da Tarefa </label>
+            <label for="tarefaSelecionada" class="label">
+              Nome da Tarefa
+            </label>
             <input
               type="text"
               class="input"
@@ -38,7 +40,9 @@
         </section>
         <footer class="modal-card-foot">
           <div class="buttons">
-            <button class="button is-success">Salvar Alterações</button>
+            <button @click="editaTarefa" class="button is-success">
+              Salvar Alterações
+            </button>
             <button @click="fecharModal" class="button">Cancelar</button>
           </div>
         </footer>
@@ -58,7 +62,10 @@ import {
   CADASTRAR_TAREFA,
   OBTER_TAREFAS,
   OBTER_PROJETOS,
+  ALTERAR_TAREFA,
 } from '@/store/tipo-actions';
+import useNotificador from '@/hooks/notificador';
+import { TipoNotificacao } from '@/interface/INotificacao';
 
 export default defineComponent({
   name: 'App',
@@ -76,6 +83,11 @@ export default defineComponent({
   methods: {
     salvaTarefa(tarefa: ITarefa) {
       this.store.dispatch(CADASTRAR_TAREFA, tarefa);
+      this.notificar(
+        TipoNotificacao.SUCESSO,
+        'Sucesso',
+        'Tarefa realizada com sucesso.'
+      );
     },
     selecionarTarefa(tarefa: ITarefa) {
       this.tarefaSelecionada = tarefa;
@@ -83,15 +95,27 @@ export default defineComponent({
     fecharModal(): void {
       this.tarefaSelecionada = null;
     },
+    editaTarefa(): void {
+      this.store.dispatch(ALTERAR_TAREFA, this.tarefaSelecionada).then(() => {
+        this.fecharModal();
+        this.notificar(
+          TipoNotificacao.SUCESSO,
+          'Sucesso',
+          'Tarefa atualizada com sucesso.'
+        );
+      });
+    },
   },
   setup() {
     const store = useStore();
+    const { notificar } = useNotificador();
     store.dispatch(OBTER_TAREFAS);
     store.dispatch(OBTER_PROJETOS);
     return {
       tarefas: computed(() => store.state.tarefas),
       projetos: computed(() => store.state.projetos),
       store,
+      notificar,
     };
   },
 });
