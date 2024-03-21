@@ -10,7 +10,12 @@ import {
 } from './tipo-mutations';
 import { INotificacao } from '@/interface/INotificacao';
 import ITarefa from '@/interface/ITarefa';
-import { OBTER_PROJETOS } from './tipo-actions';
+import {
+  ALTERAR_PROJETO,
+  CADASTRAR_PROJETO,
+  EXCLUI_PROJETO,
+  OBTER_PROJETOS,
+} from './tipo-actions';
 import clientHttp from '@/http';
 
 interface Estado {
@@ -62,6 +67,17 @@ export const store = createStore<Estado>({
         .get('/projetos')
         .then((response) => commit(DEFINIR_PROJETOS, response.data))
         .catch((error) => console.error(error));
+    },
+    [CADASTRAR_PROJETO](contexto, nomeDoProjeto: string) {
+      return clientHttp.post('/projetos', { nome: nomeDoProjeto });
+    },
+    [ALTERAR_PROJETO](contexto, projeto: IProjeto) {
+      return clientHttp.put(`/projetos/${projeto.id}`, projeto);
+    },
+    [EXCLUI_PROJETO]({ commit }, projetoId: string) {
+      return clientHttp
+        .delete(`/projetos/${projetoId}`)
+        .then(() => commit(EXCLUIR_PROJETO, projetoId));
     },
   },
 });

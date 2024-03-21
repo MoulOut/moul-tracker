@@ -20,9 +20,9 @@
 <script lang="ts">
 import { TipoNotificacao } from '@/interface/INotificacao';
 import { useStore } from '@/store';
-import { ADICIONA_PROJETO, ALTERA_PROJETO } from '@/store/tipo-mutations';
 import { defineComponent } from 'vue';
 import useNotificar from '@/hooks/notificador';
+import { ALTERAR_PROJETO, CADASTRAR_PROJETO } from '@/store/tipo-actions';
 
 export default defineComponent({
   // eslint-disable-next-line vue/multi-word-component-names
@@ -44,10 +44,12 @@ export default defineComponent({
   methods: {
     salvar() {
       if (this.id) {
-        this.store.commit(ALTERA_PROJETO, {
-          id: this.id,
-          nome: this.nomeDoProjeto,
-        });
+        this.store
+          .dispatch(ALTERAR_PROJETO, {
+            id: this.id,
+            nome: this.nomeDoProjeto,
+          })
+          .then(() => this.casoDeSucesso());
       } else {
         if (!this.nomeDoProjeto) {
           return this.notificar(
@@ -56,8 +58,12 @@ export default defineComponent({
             'Nome do projeto precisa ser informado.'
           );
         }
-        this.store.commit(ADICIONA_PROJETO, this.nomeDoProjeto);
+        this.store
+          .dispatch(CADASTRAR_PROJETO, this.nomeDoProjeto)
+          .then(() => this.casoDeSucesso());
       }
+    },
+    casoDeSucesso() {
       this.nomeDoProjeto = '';
       this.notificar(
         TipoNotificacao.SUCESSO,
