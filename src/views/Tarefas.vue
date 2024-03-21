@@ -19,7 +19,11 @@ import Tarefa from '../components/Tarefa.vue';
 import ITarefa from '../interface/ITarefa';
 import Box from '../components/Box.vue';
 import { useStore } from '@/store';
-import { OBTER_TAREFAS } from '@/store/tipo-actions';
+import {
+  CADASTRAR_TAREFA,
+  OBTER_TAREFAS,
+  OBTER_PROJETOS,
+} from '@/store/tipo-actions';
 
 export default defineComponent({
   name: 'App',
@@ -31,14 +35,16 @@ export default defineComponent({
   },
   methods: {
     salvaTarefa(tarefa: ITarefa) {
-      this.tarefas.push(tarefa);
+      this.store.dispatch(CADASTRAR_TAREFA, tarefa);
     },
   },
   setup() {
     const store = useStore();
     store.dispatch(OBTER_TAREFAS);
+    store.dispatch(OBTER_PROJETOS);
     return {
       tarefas: computed(() => store.state.tarefas),
+      projetos: computed(() => store.state.projetos),
       store,
     };
   },
