@@ -5,6 +5,7 @@ import {
   ADICIONA_PROJETO,
   ALTERA_PROJETO,
   DEFINIR_PROJETOS,
+  DEFINIR_TAREFAS,
   EXCLUIR_PROJETO,
   NOTIFICAR,
 } from './tipo-mutations';
@@ -15,6 +16,7 @@ import {
   CADASTRAR_PROJETO,
   EXCLUI_PROJETO,
   OBTER_PROJETOS,
+  OBTER_TAREFAS,
 } from './tipo-actions';
 import clientHttp from '@/http';
 
@@ -60,6 +62,9 @@ export const store = createStore<Estado>({
     [DEFINIR_PROJETOS](state, projetos: IProjeto[]) {
       state.projetos = projetos;
     },
+    [DEFINIR_TAREFAS](state, tarefas: ITarefa[]) {
+      state.tarefas = tarefas;
+    },
   },
   actions: {
     [OBTER_PROJETOS]({ commit }) {
@@ -78,6 +83,12 @@ export const store = createStore<Estado>({
       return clientHttp
         .delete(`/projetos/${projetoId}`)
         .then(() => commit(EXCLUIR_PROJETO, projetoId));
+    },
+    [OBTER_TAREFAS]({ commit }) {
+      clientHttp
+        .get('/tarefas')
+        .then((response) => commit(DEFINIR_TAREFAS, response.data))
+        .catch((error) => console.error(error));
     },
   },
 });
