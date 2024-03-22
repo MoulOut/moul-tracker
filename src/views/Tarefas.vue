@@ -1,15 +1,28 @@
 <template>
   <Formulario @salvar-tarefa="salvaTarefa" />
   <div class="lista">
+    <div class="field">
+      <p class="control has-icons-left">
+        <input
+          class="input"
+          type="text"
+          placeholder="Digite para filtrar tarefas."
+          v-model="filtro"
+        />
+        <span class="icon is-small is-left">
+          <i class="fas fa-search"></i>
+        </span>
+      </p>
+    </div>
+    <Box v-if="listaEstaVazia"
+      >Você ainda não começou nenhuma tarefa hoje :(
+    </Box>
     <Tarefa
       v-for="tarefa in tarefas"
       :key="tarefa.descricao"
       :tarefa="tarefa"
       @tarefa-clicada="selecionarTarefa"
     />
-    <Box v-if="listaEstaVazia"
-      >Você ainda não começou nenhuma tarefa hoje :(
-    </Box>
     <div
       class="modal"
       :class="{ 'is-active': tarefaSelecionada }"
@@ -52,7 +65,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from 'vue';
+import { defineComponent, computed, ref } from 'vue';
 import Formulario from '../components/Formulario.vue';
 import Tarefa from '../components/Tarefa.vue';
 import ITarefa from '../interface/ITarefa';
@@ -111,10 +124,18 @@ export default defineComponent({
     const { notificar } = useNotificador();
     store.dispatch(OBTER_TAREFAS);
     store.dispatch(OBTER_PROJETOS);
+    const filtro = ref('');
+    const tarefas = computed(() =>
+      store.state.tarefa.tarefas.filter(
+        (task) => !filtro.value || task.descricao.includes(filtro.value)
+      )
+    );
+
     return {
-      tarefas: computed(() => store.state.tarefa.tarefas),
+      tarefas,
       store,
       notificar,
+      filtro,
     };
   },
 });
