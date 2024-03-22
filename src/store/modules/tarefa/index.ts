@@ -37,9 +37,14 @@ export const tarefa: Module<EstadoTarefa, Estado> = {
     },
   },
   actions: {
-    [OBTER_TAREFAS]({ commit }) {
+    [OBTER_TAREFAS]({ commit }, filtro: string) {
+      let url = '/tarefas';
+
+      if (filtro) {
+        url += `?descricao=${filtro}`;
+      }
       return clientHttp
-        .get('/tarefas')
+        .get(url)
         .then((response) => commit(DEFINIR_TAREFAS, response.data))
         .catch((error) => console.error(error));
     },
