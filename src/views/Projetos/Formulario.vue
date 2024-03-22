@@ -23,57 +23,14 @@ import { useStore } from '@/store';
 import { defineComponent, ref } from 'vue';
 import useNotificar from '@/hooks/notificador';
 import { ALTERAR_PROJETO, CADASTRAR_PROJETO } from '@/store/tipo-actions';
+import { useRouter } from 'vue-router';
 
 export default defineComponent({
   // eslint-disable-next-line vue/multi-word-component-names
   name: 'Formulario',
   props: { id: { type: String } },
-  // mounted() {
-  //   if (this.id) {
-  //     const projeto = this.store.state.projeto.projetos.find(
-  //       (project) => project.id === this.id
-  //     );
-  //     this.nomeDoProjeto = projeto?.nome || '';
-  //   }
-  // },
-  // data() {
-  //   return {
-  //     nomeDoProjeto: '',
-  //   };
-  // },
-  methods: {
-    salvar() {
-      if (this.id) {
-        this.store
-          .dispatch(ALTERAR_PROJETO, {
-            id: this.id,
-            nome: this.nomeDoProjeto,
-          })
-          .then(() => this.casoDeSucesso());
-      } else {
-        if (!this.nomeDoProjeto) {
-          return this.notificar(
-            TipoNotificacao.FALHA,
-            'Falha',
-            'Nome do projeto precisa ser informado.'
-          );
-        }
-        this.store
-          .dispatch(CADASTRAR_PROJETO, this.nomeDoProjeto)
-          .then(() => this.casoDeSucesso());
-      }
-    },
-    casoDeSucesso() {
-      this.nomeDoProjeto = '';
-      this.notificar(
-        TipoNotificacao.SUCESSO,
-        'Sucesso',
-        'O projeto foi salvo com sucesso.'
-      );
-      this.$router.push('/projetos');
-    },
-  },
   setup(props) {
+    const router = useRouter();
     const store = useStore();
     const { notificar } = useNotificar();
     const nomeDoProjeto = ref('');
@@ -84,10 +41,41 @@ export default defineComponent({
       nomeDoProjeto.value = projeto?.nome || '';
     }
 
+    const casoDeSucesso = () => {
+      nomeDoProjeto.value = '';
+      notificar(
+        TipoNotificacao.SUCESSO,
+        'Sucesso',
+        'O projeto foi salvo com sucesso.'
+      );
+      router.push('/projetos');
+    };
+
+    const salvar = () => {
+      if (props.id) {
+        store
+          .dispatch(ALTERAR_PROJETO, {
+            id: props.id,
+            nome: nomeDoProjeto.value,
+          })
+          .then(() => casoDeSucesso());
+      } else {
+        if (!nomeDoProjeto.value) {
+          return notificar(
+            TipoNotificacao.FALHA,
+            'Falha',
+            'Nome do projeto precisa ser informado.'
+          );
+        }
+        store
+          .dispatch(CADASTRAR_PROJETO, nomeDoProjeto.value)
+          .then(() => casoDeSucesso());
+      }
+    };
+
     return {
-      store,
-      notificar,
-      nomeDoProjeto
+      nomeDoProjeto,
+      salvar,
     };
   },
 });
