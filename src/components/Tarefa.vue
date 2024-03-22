@@ -28,16 +28,20 @@ export default defineComponent({
   props: {
     tarefa: { type: Object as PropType<ITarefa>, required: true },
   },
-  methods: {
-    tarefaClicada(): void {
-      this.$emit('tarefaClicada', this.tarefa);
-    },
+  setup(props, { emit }) {
+    const tarefaClicada = (): void => {
+      emit('tarefaClicada', props.tarefa);
+    };
+
+    return {
+      tarefaClicada,
+    };
   },
 });
 </script>
 
 <style scoped>
-.clicavel{
+.clicavel {
   cursor: pointer;
 }
 </style>

@@ -35,7 +35,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent } from 'vue';
+import { computed, defineComponent, ref } from 'vue';
 import Temporizador from './Temporizador.vue';
 import ITarefa from '@/interface/ITarefa';
 import { useStore } from '@/store';
@@ -46,19 +46,17 @@ export default defineComponent({
   // eslint-disable-next-line
   name: 'Formulário',
   emits: ['salvarTarefa'],
-  data() {
-    return {
-      descricao: '',
-      idProjeto: '',
-    };
-  },
   components: { Temporizador },
-  methods: {
-    finalizarTarefa(tempoDecorrido: number): void {
-      const projeto = this.projetos.find((p) => p.id === this.idProjeto);
+  setup(props, { emit }) {
+    const descricao = ref('');
+    const idProjeto = ref('');
+    const projetos = computed(() => store.state.projeto.projetos);
+
+    const finalizarTarefa = (tempoDecorrido: number): void => {
+      const projeto = projetos.value.find((p) => p.id === idProjeto.value);
 
       if (!projeto) {
-        this.notificar(
+        notificar(
           TipoNotificacao.ATENCAO,
           'OPS!',
           'Selecione um projeto antes de iniciar uma tarefa'
@@ -67,21 +65,24 @@ export default defineComponent({
         return;
       }
 
-      this.$emit('salvarTarefa', {
-        descricao: this.descricao,
+      emit('salvarTarefa', {
+        descricao: descricao.value,
         duracaoEmSegundos: tempoDecorrido,
-        projeto: this.projetos.find((projeto) => projeto.id === this.idProjeto),
+        projeto: projetos.value.find(
+          (projeto) => projeto.id === idProjeto.value
+        ),
       } as ITarefa);
-      this.descricao = '';
-    },
-  },
-  setup() {
+      descricao.value = '';
+    };
+
     const store = useStore();
     const { notificar } = useNotificador();
     return {
-      projetos: computed(() => store.state.projeto.projetos),
-      store,
+      projetos,
       notificar,
+      descricao,
+      idProjeto,
+      finalizarTarefa,
     };
   },
 });
